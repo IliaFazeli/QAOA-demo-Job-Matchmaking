@@ -13,99 +13,122 @@ All methods work consistently below the threshold of 10 candidates - but unfortu
 # QUBO Formulation Derivation
 
 This section outlines how the QUBO used in the job-matching QAOA demo is constructed.  # QUBO Formulation Derivation
-# QUBO Formulation Derivation
-
-Below is a clean, structured derivation of the QUBO used in the job-matching QAOA project.  
-I kept your logic and writing style — only filled in missing steps and made it readable.
 
 ---
+# Worker Selection QUBO → Ising
 
-## Step 1 — Score Model
+## Step 1 — Compute Worker Scores
 
-Each worker gets a real-valued score:
+Each worker is assigned a real-valued score:
 
-$ Score_i = \alpha \cdot skill_i + \beta \cdot rating_i - \gamma \cdot distance_i $
+$$
+\text{Score}_i = \alpha \cdot \text{skill}_i + \beta \cdot \text{rating}_i - \gamma \cdot \text{distance}_i
+$$
 
 For this project:
 
-$ \alpha = 1, \; \beta = 1, \; \gamma = 0.5 $
+$$
+\alpha = 1, \quad \beta = 1, \quad \gamma = 0.5
+$$
 
 ---
 
-## Step 2 — Penalty $\lambda$
+## Step 2 — Penalty Parameter $\lambda$
 
-To enforce selecting exactly $K$ workers, I use:
+To enforce selecting **exactly $K$ workers**, define a penalty:
 
-$ \lambda = \max(Score) \cdot 2K $
+$$
+\lambda = 2 K \cdot \max(\text{Score})
+$$
 
-This makes constraint violations more expensive than any possible gain.
+This ensures that constraint violations are more expensive than any possible score gain.
 
 ---
 
 ## Step 3 — QUBO Objective
 
-We want to minimize:
+We want to **minimize**:
 
-$ -\sum_i Score_i x_i + \lambda \, (\sum_i x_i - K)^2 $
+$$
+-\sum_i \text{Score}_i x_i + \lambda \left( \sum_i x_i - K \right)^2
+$$
 
-where $x_i \in \{0,1\}$ represents selecting worker $i$.
+where $x_i \in \{0,1\}$ indicates whether worker $i$ is selected.
 
 ### Expand the penalty term
 
-$ (\sum_i x_i - K)^2 = (\sum_i x_i)^2 - 2K \sum_i x_i + K^2 $
+$$
+\left( \sum_i x_i - K \right)^2 = \left( \sum_i x_i \right)^2 - 2 K \sum_i x_i + K^2
+$$
 
 and
 
-$ (\sum_i x_i)^2 = \sum_i x_i + 2\sum_{i<j} x_i x_j $
+$$
+\left( \sum_i x_i \right)^2 = \sum_i x_i + 2 \sum_{i<j} x_i x_j
+$$
 
-Putting this together:
+So the penalty becomes:
 
-$ \lambda \sum_i x_i + 2\lambda \sum_{i<j} x_i x_j - 2\lambda K \sum_i x_i + \lambda K^2 $
-
----
-
-## Combine all terms
-
-Linear terms:
-
-$ \sum_i (-Score_i + \lambda(1 - 2K))\, x_i $
-
-Quadratic terms:
-
-$ 2\lambda \sum_{i<j} x_i x_j $
-
-Constant term:
-
-$ C = \lambda K^2 $
+$$
+\lambda \sum_i x_i + 2\lambda \sum_{i<j} x_i x_j - 2 \lambda K \sum_i x_i + \lambda K^2
+$$
 
 ---
 
-## Step 4 — Convert QUBO to Ising Form
+## Step 4 — Combine Terms
+
+**Linear terms:**
+
+$$
+\sum_i (-\text{Score}_i + \lambda(1 - 2K)) x_i
+$$
+
+**Quadratic terms:**
+
+$$
+2 \lambda \sum_{i<j} x_i x_j
+$$
+
+**Constant term:**
+
+$$
+C = \lambda K^2
+$$
+
+---
+
+## Step 5 — Convert QUBO → Ising
 
 Use the standard substitution:
 
-$ x_i = (1 - Z_i)/2 $
-
-This converts binary variables into Pauli-Z operators ($Z_i = \pm 1$).
-
----
-
-## Step 5 — Final Ising Hamiltonian
-
-The Hamiltonian becomes:
-
-$ H = \sum_i h_i Z_i + \sum_{i<j} J_{ij} Z_i Z_j + C $
-
-with:
-
-$ h_i = \frac{\lambda(1 - 2K) - Score_i}{2} $
-
-$ J_{ij} = \frac{\lambda}{2} $
-
-$ C = \lambda K^2 $
-
-This is exactly what is implemented in the SparsePauliOp used in the QAOA solver.
+$$
+x_i = \frac{1 - Z_i}{2}, \quad Z_i = \pm 1
+$$
 
 ---
 
-## Summary
+## Step 6 — Final Ising Hamiltonian
+
+$$
+H = \sum_i h_i Z_i + \sum_{i<j} J_{ij} Z_i Z_j + C
+$$
+
+with coefficients:
+
+$$
+h_i = \frac{\lambda(1 - 2K) - \text{Score}_i}{2}, \quad
+J_{ij} = \frac{\lambda}{2}, \quad
+C = \lambda K^2
+$$
+
+This corresponds directly to the **SparsePauliOp** used in the QAOA solver.
+
+---
+
+## Quickstart
+
+Create and activate a virtual env, install deps:
+```bash
+python -m venv venv
+source venv/bin/activate  # or venv\Scripts\activate on Windows
+pip install -r requirements.txt
