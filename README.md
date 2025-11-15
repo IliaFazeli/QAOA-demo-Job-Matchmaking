@@ -64,13 +64,13 @@ $$
 and
 
 $$
-\left( \sum_i x_i \right)^2 = \sum_i x_i + 2 \sum_{i<j} x_i x_j
+\left( \sum_i x_i \right)^2 = \sum_i x_i + 2 \sum_{i\lt j} x_i x_j
 $$
 
 So the penalty becomes:
 
 $$
-\lambda \sum_i x_i + 2\lambda \sum_{i<j} x_i x_j - 2 \lambda K \sum_i x_i + \lambda K^2
+\lambda \sum_i x_i + 2\lambda \sum_{i\lt j} x_i x_j - 2 \lambda K \sum_i x_i + \lambda K^2
 $$
 
 ---
@@ -86,7 +86,7 @@ $$
 **Quadratic terms:**
 
 $$
-2 \lambda \sum_{i<j} x_i x_j
+2 \lambda \sum_{i\lt j} x_i x_j
 $$
 
 **Constant term:**
@@ -110,7 +110,7 @@ $$
 ## Step 6 — Final Ising Hamiltonian
 
 $$
-H = \sum_i h_i Z_i + \sum_{i<j} J_{ij} Z_i Z_j + C
+H = \sum_i h_i Z_i + \sum_{i\lt j} J_{ij} Z_i Z_j + C
 $$
 
 with coefficients:
