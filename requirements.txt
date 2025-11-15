@@ -1,0 +1,11 @@
+# Core scientific computing
+numpy==1.26.4
+scipy==1.15.2
+matplotlib==3.10.7
+
+# Qiskit (quantum computing)
+qiskit==1.4.5
+qiskit-aer==0.17.0
+
+# Optional: For real IBM Quantum hardware access
+# qiskit-ibm-runtime==0.40.1
