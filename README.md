@@ -33,9 +33,9 @@ $$
 
 ---
 
-## Step 2 — Penalty Parameter $\lambda$
+## Step 2 — Penalty Parameter lambda
 
-To enforce selecting **exactly $K$ workers**, define a penalty:
+To enforce selecting **exactly K workers**, define a penalty:
 
 $$
 \lambda = 2 K \cdot \max(\text{Score})
@@ -53,7 +53,7 @@ $$
 -\sum_i \text{Score}_i x_i + \lambda \left( \sum_i x_i - K \right)^2
 $$
 
-where $x_i \in \{0,1\}$ indicates whether worker $i$ is selected.
+where x being 0 or 1 indicates indicates whether worker i is selected.
 
 ### Expand the penalty term
 
